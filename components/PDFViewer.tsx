@@ -102,7 +102,10 @@ const PDFViewer = ({navigation, route}: PDFViewerProps) => {
 
   return (
     <View
-      >
+      style={[
+        styles.container,
+        Platform.OS === 'android' ? {paddingTop: insets.top} : {},
+      ]}>
       <DocumentView
         ref={_viewer}
         // hideDefaultAnnotationToolbars={[Config.DefaultToolbars.Annotate]}
