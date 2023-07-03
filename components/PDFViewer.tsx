@@ -9,6 +9,7 @@ import {
   Text,
 } from 'react-native';
 
+import * as FileSystem from 'expo-file-system';
 import {StackScreenProps} from '@react-navigation/stack';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
@@ -24,8 +25,19 @@ const PDFViewer = ({navigation, route}: PDFViewerProps) => {
   const _viewer = React.useRef<DocumentView>(null);
   const insets = useSafeAreaInsets();
 
+  const root: string = FileSystem.documentDirectory || '';
   const path = route.params.path + '/' + route.params.currDir;
 
+  const myToolbar = {
+    [Config.CustomToolbarKey.Id]: 'myToolbar',
+    [Config.CustomToolbarKey.Name]: 'myToolbar',
+    [Config.CustomToolbarKey.Icon]: Config.ToolbarIcons.FillAndSign,
+    [Config.CustomToolbarKey.Items]: [
+      Config.Tools.annotationCreateArrow,
+      Config.Tools.annotationCreateCallout,
+      Config.Buttons.undo,
+    ],
+  };
 
   const onLeadingNavButtonPressed = () => {
     if (navigation.canGoBack()) navigation.goBack();
@@ -90,29 +102,16 @@ const PDFViewer = ({navigation, route}: PDFViewerProps) => {
 
   return (
     <View
-      // style={[
-      //   styles.container,
-      //   Platform.OS === 'android' ? {paddingTop: insets.top} : {},
-      // ]}
       >
       <DocumentView
         ref={_viewer}
         // hideDefaultAnnotationToolbars={[Config.DefaultToolbars.Annotate]}
         // annotationToolbars={[Config.DefaultToolbars.Annotate, myToolbar]}
-        // hideAnnotationToolbarSwitcher={false}
-        // hideTopToolbars={false}
-        // hideTopAppNavBar={false}
-        // document={path}
-        // padStatusBar={true}
-        // showLeadingNavButton={true}
-        // leadingNavButtonIcon={
-        //   Platform.OS === 'ios'
-        //     ? 'ic_close_black_24px.png'
-        //     : 'ic_arrow_back_white_24dp'
-        // }
-        // onLeadingNavButtonPressed={onLeadingNavButtonPressed}
-        // onDocumentLoaded={onDocumentLoaded}
-        // onAnnotationChanged={onAnnotationChanged}
+        
+        document={path}
+        onLeadingNavButtonPressed={onLeadingNavButtonPressed}
+        onDocumentLoaded={onDocumentLoaded}
+        onAnnotationChanged={onAnnotationChanged}
         onExportAnnotationCommand={onExportAnnotationCommand}
         onZoomChanged={onZoomChanged}
         readOnly={false}
